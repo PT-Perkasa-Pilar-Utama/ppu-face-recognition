@@ -3,7 +3,6 @@
   "description": "Blazing-fast and lightweight face recognition library for Node.js and Bun. Perform accurate face detection, recognition, and verification with a simple, modern, and type-safe API. Ideal for authentication systems, security applications, and computer vision tasks.",
   "keywords": [
     "bun-compatible",
-    "bun-ocr",
     "computer-vision",
     "image-processing",
     "facial-recognition",
