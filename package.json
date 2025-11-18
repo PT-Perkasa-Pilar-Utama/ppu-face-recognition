@@ -1,12 +1,56 @@
 {
   "name": "ppu-face-recognition",
-  "module": "index.ts",
+  "description": "Blazing-fast and lightweight face recognition library for Node.js and Bun. Perform accurate face detection, recognition, and verification with a simple, modern, and type-safe API. Ideal for authentication systems, security applications, and computer vision tasks.",
+  "keywords": [
+    "bun-compatible",
+    "bun-ocr",
+    "computer-vision",
+    "image-processing",
+    "facial-recognition",
+    "facial-verification",
+    "facenet512",
+    "facenet",
+    "deepface",
+    "onnx",
+    "onnxruntime",
+    "typescript-face-recognition"
+  ],
+  "author": "snowfluke",
+  "license": "MIT",
   "type": "module",
-  "private": true,
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "scripts": {
+    "task": "bun scripts/task.ts",
+    "build:test": "bun task build && bun test",
+    "build:publish": "bun task build && bun task report-size && bun task publish",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@stylistic/eslint-plugin": "latest",
+    "@types/bun": "latest",
+    "@types/lodash.merge": "^4.6.9",
+    "@types/uglify-js": "latest",
+    "eslint": "latest",
+    "eslint-plugin-jsdoc": "latest",
+    "mitata": "latest",
+    "prettier": "3.6.2",
+    "tsx": "latest",
+    "typescript": "latest",
+    "typescript-eslint": "latest",
+    "uglify-js": ">=2.4.24"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PT-Perkasa-Pilar-Utama/ppu-face-recognition.git"
+  },
+  "dependencies": {
+    "lodash.merge": "^4.6.2",
+    "onnxruntime-node": "^1.23.2",
+    "ppu-ocv": "^1.3.0"
   }
 }
