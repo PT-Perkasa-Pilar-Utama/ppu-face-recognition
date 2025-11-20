@@ -5,6 +5,7 @@ node_modules
 out
 out_verify
 dist
+lib
 *.tgz
 
 # code coverage
