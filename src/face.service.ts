@@ -80,6 +80,7 @@ export class FaceService {
 
   async verify(img1: ArrayBuffer, img2: ArrayBuffer) {
     try {
+      // still dont know what to return and passed
       const detector = new Detector(
         this.detectorSession!,
         this.embedderSession!,

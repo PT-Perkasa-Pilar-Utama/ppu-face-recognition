@@ -1,6 +1,9 @@
 import * as ort from "onnxruntime-node";
 import { createCanvas, type Canvas } from "ppu-ocv";
-import type { YoloDetectionInference } from "ppu-yolo-onnx-inference";
+import type {
+  DetectedObject,
+  YoloDetectionInference,
+} from "ppu-yolo-onnx-inference";
 import {
   DEFAULT_DEBUGGING_OPTIONS,
   DEFAULT_DETECTION_OPTIONS,
@@ -108,11 +111,71 @@ export class Detector {
     return canvas;
   }
 
-  private extractFace(img1: ArrayBuffer, img2: ArrayBuffer) {
-    // log warning if face is more than one face detected in one image, we will pick the highest confidence
+  private async extractFace(img1: ArrayBuffer, img2: ArrayBuffer) {
+    try {
+      const detection1 = await this.detector.detect(img1);
+      if (!detection1.length) return {};
+
+      const filterDetection1 = detection1.filter(
+        (detection) => detection.confidence >= this.options.threshold!,
+      );
+
+      let face1 = filterDetection1[0];
+      if (filterDetection1.length > 1) {
+        this.log(
+          "[WARN] More than one face detected, the highest confidence face is picked.",
+        );
+
+        face1 = this.getMostConfident(filterDetection1);
+      }
+
+      const detection2 = await this.detector.detect(img2);
+      if (!detection2.length) return {};
+
+      const filterDetection2 = detection1.filter(
+        (detection) => detection.confidence >= this.options.threshold!,
+      );
+
+      let face2 = filterDetection2[0];
+      if (filterDetection2.length > 1) {
+        this.log(
+          "[WARN] More than one face detected, the highest confidence face is picked.",
+        );
+
+        face2 = this.getMostConfident(filterDetection2);
+      }
+
+      // It would be cool to use Promise.all here
+      // return necessary stuff for embeding process
+      return {};
+    } catch (error) {}
+  }
+
+  private getMostConfident(objs: DetectedObject[]): DetectedObject {
+    let maxObj = objs[0]!;
+
+    for (let i = 1; i < objs.length; i++) {
+      if (objs[i]!.confidence > maxObj.confidence) {
+        maxObj = objs[i]!;
+      }
+    }
+
+    return maxObj;
+  }
+
+  private alignFace() {
+    this.options.alignment;
+  }
+
+  private extendFaceArea() {
+    this.options.paddingPercentage;
   }
 
   private extractEmbeddings() {}
+
+  private preprocessImageEmbeddings() {}
+
+  private postprocessImageEmbeddings() {}
 
   async run() {}
 }
