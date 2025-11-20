@@ -13,7 +13,7 @@ export class FaceService {
   private options: FaceServiceOptions = DEFAULT_FACE_SERVICE_OPTIONS;
 
   private detectorSession: ort.InferenceSession | null = null;
-  private verifierReSession: ort.InferenceSession | null = null;
+  private embedderSession: ort.InferenceSession | null = null;
 
   private utils: Utils;
 
@@ -54,12 +54,12 @@ export class FaceService {
         undefined,
         `${GITHUB_BASE_URL}facenet512.onnx`,
       );
-      this.verifierReSession = await ort.InferenceSession.create(
+      this.embedderSession = await ort.InferenceSession.create(
         new Uint8Array(verifierBuffer),
         this.options.session!,
       );
       this.utils.log(
-        `Face Verifier ONNX model loaded successfully\n\tinput: ${this.verifierReSession.inputNames}\n\toutput: ${this.verifierReSession.outputNames}`,
+        `Face Verifier ONNX model loaded successfully\n\tinput: ${this.embedderSession.inputNames}\n\toutput: ${this.embedderSession.outputNames}`,
       );
     } catch (error) {
       console.error("Failed to initialize FaceService:", error);
@@ -71,7 +71,7 @@ export class FaceService {
    * Checks if the service has been initialized with models loaded.
    */
   public isInitialized(): boolean {
-    return this.detectorSession !== null && this.verifierReSession !== null;
+    return this.detectorSession !== null && this.embedderSession !== null;
   }
 
   async verify(img1: ArrayBuffer, img2: ArrayBuffer) {}
@@ -82,5 +82,17 @@ export class FaceService {
 
   private calculateResult() {
     // np.round(distance, 6)
+  }
+
+  /**
+   * Releases the onnx runtime session for both
+   * detection and embedding model.
+   */
+  public async destroy(): Promise<void> {
+    await this.detectorSession?.release();
+    await this.embedderSession?.release();
+
+    this.detectorSession = null;
+    this.embedderSession = null;
   }
 }
