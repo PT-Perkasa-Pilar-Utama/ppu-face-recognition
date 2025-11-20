@@ -1,9 +1,9 @@
 import type { DebuggingOptions } from "ppu-yolo-onnx-inference";
 import type {
-    DetectionOptions,
-    FaceServiceOptions,
-    SessionOptions,
-    VerificationOptions,
+  DetectionOptions,
+  FaceServiceOptions,
+  SessionOptions,
+  VerificationOptions,
 } from "./interface";
 
 export const DEFAULT_INFERENCE = {
