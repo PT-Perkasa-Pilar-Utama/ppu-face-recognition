@@ -29,7 +29,7 @@ import { file } from "bun";
 // 1. Initialize the service
 const service = new FaceService({
   detection: { threshold: 0.5 },
-  verification: { cosine: 0.3 } // Strict threshold for security
+  verification: { cosine: 0.3 }, // Strict threshold for security
 });
 
 await service.initialize();
@@ -58,28 +58,30 @@ You can update options on the fly without reloading models:
 ```typescript
 service.updateOptions({
   detection: { paddingPercentage: 20 }, // Expand face box by 20%
-  verification: { distanceMetric: "euclideanL2" }
+  verification: { distanceMetric: "euclideanL2" },
 });
 ```
 
 ## Configuration
 
 ### Detection Options
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `threshold` | `number` | `0.5` | Confidence threshold for face detection. |
-| `paddingPercentage` | `number` | `0` | Percentage to expand the detected face box (e.g., `10` for 10%). Useful for ensuring the whole face is captured. |
+
+| Option              | Type     | Default | Description                                                                                                      |
+| ------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------- |
+| `threshold`         | `number` | `0.5`   | Confidence threshold for face detection.                                                                         |
+| `paddingPercentage` | `number` | `0`     | Percentage to expand the detected face box (e.g., `10` for 10%). Useful for ensuring the whole face is captured. |
 
 ### Verification Options
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `distanceMetric` | `"cosine" \| "euclidean" \| ...` | `"cosine"` | Metric to compare embeddings. |
-| `cosine` | `number` | `0.3` | Threshold for Cosine distance (lower is better). |
-| `euclideanL2` | `number` | `1.04` | Threshold for L2 Euclidean distance. |
 
+| Option           | Type                             | Default    | Description                                      |
+| ---------------- | -------------------------------- | ---------- | ------------------------------------------------ |
+| `distanceMetric` | `"cosine" \| "euclidean" \| ...` | `"cosine"` | Metric to compare embeddings.                    |
+| `cosine`         | `number`                         | `0.3`      | Threshold for Cosine distance (lower is better). |
+| `euclideanL2`    | `number`                         | `1.04`     | Threshold for L2 Euclidean distance.             |
 
 ## Benchmark
 
+```sh
 > bun task bench
 $ bun scripts/task.ts bench
 Running benchmark: index.bench.ts
@@ -93,27 +95,28 @@ benchmark                        avg (min … max) p75 / p99    (min … top 1%)
 ------------------------------------------------ -------------------------------
 • Face Verification Pipeline
 ------------------------------------------------ -------------------------------
-Full Verify (Same Image)          159.51 ms/iter 161.99 ms        █             
-                         (154.66 ms … 167.28 ms) 164.17 ms        █             
+Full Verify (Same Image)          159.51 ms/iter 161.99 ms        █
+                         (154.66 ms … 167.28 ms) 164.17 ms        █
                          ( 48.00 kb …  41.55 mb)  12.23 mb ██▁█▁▁▁██▁▁█▁▁▁█▁█▁▁█
 
 • Micro Benchmarks
 ------------------------------------------------ -------------------------------
-Cosine Distance Calculation         1.02 µs/iter   1.01 µs  █                   
-                           (939.62 ns … 2.13 µs)   1.63 µs  ██                  
+Cosine Distance Calculation         1.02 µs/iter   1.01 µs  █
+                           (939.62 ns … 2.13 µs)   1.63 µs  ██
                          (  0.00  b … 932.00  b) 211.57  b ▆██▃▁▂▁▂▁▁▁▁▁▁▁▁▁▁▁▁▁
 
-Euclidean Distance Calculation      1.03 µs/iter 998.69 ns  █                   
-                           (825.30 ns … 3.78 µs)   2.08 µs  █                   
+Euclidean Distance Calculation      1.03 µs/iter 998.69 ns  █
+                           (825.30 ns … 3.78 µs)   2.08 µs  █
                          ( 60.00  b … 612.00  b) 431.49  b ▇██▅▃▃▁▂▃▁▁▂▁▂▁▂▁▁▁▁▁
 
-Euclidean L2 Distance Calculation 998.93 ns/iter 917.00 ns  █                   
-                           (750.00 ns … 1.54 ms)   2.88 µs  █▄                  
+Euclidean L2 Distance Calculation 998.93 ns/iter 917.00 ns  █
+                           (750.00 ns … 1.54 ms)   2.88 µs  █▄
                          (  0.00  b … 144.00 kb) 106.60  b ▁██▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
 
-Angular Distance Calculation      889.21 ns/iter 917.30 ns   █      ▂           
-                           (817.55 ns … 1.11 µs)   1.03 µs  ▆█▃██ ▇▆█▃          
+Angular Distance Calculation      889.21 ns/iter 917.30 ns   █      ▂
+                           (817.55 ns … 1.11 µs)   1.03 µs  ▆█▃██ ▇▆█▃
                          (  0.00  b … 736.00  b) 137.64  b ▇███████████▇▅▅▃▄▂▂▁▃
+```
 
 ## Testing
 
