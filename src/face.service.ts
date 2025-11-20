@@ -79,26 +79,48 @@ export class FaceService {
   }
 
   async verify(img1: ArrayBuffer, img2: ArrayBuffer) {
+    if (!this.isInitialized()) {
+      throw new Error("FaceService is not initialized. Call initialize() first.");
+    }
+
     try {
-      // still dont know what to return and passed
       const detector = new Detector(
         this.detectorSession!,
         this.embedderSession!,
         this.options.detection,
         this.options.debugging,
       );
-      const embeddings = await detector.run(detector);
+      
+      const { embedding1, embedding2, face1, face2 } = await detector.run(img1, img2);
+
+      if (!embedding1 || !embedding2) {
+        return {
+          match: false,
+          distance: -1,
+          threshold: -1,
+          face1,
+          face2,
+          error: "Face not detected in one or both images",
+        };
+      }
 
       const verifier = new Verifier(
         this.options.verification,
         this.options.debugging,
       );
-      const distance = verifier.run(embeddings);
+      
+      const result = verifier.run(embedding1, embedding2);
 
-      const result = {};
-      // np.round(distance, 6)
+      return {
+        match: result.match,
+        distance: Number(result.distance.toFixed(6)),
+        threshold: result.threshold,
+        face1,
+        face2,
+      };
     } catch (error) {
-      return {};
+      this.utils.log(`Verification failed: ${error}`);
+      throw error;
     }
   }
 

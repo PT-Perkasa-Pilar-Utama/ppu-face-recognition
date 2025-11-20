@@ -44,7 +44,7 @@ console.log(modelMetadata);
 function canvasToTensor(
   canvas: Canvas,
   width: number,
-  height: number,
+  height: number
 ): Float32Array {
   const tensor = new Float32Array(INPUT_SHAPE[3]! * height * width);
   const ctx = canvas.getContext("2d");
@@ -113,3 +113,12 @@ if (faceDetection.length) {
     path: "out",
   });
 }
+
+const no_facial_area = {
+  x: null,
+  y: null,
+  w: null,
+  h: null,
+  left_eye: null,
+  right_eye: null,
+};
