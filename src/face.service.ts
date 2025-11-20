@@ -4,7 +4,9 @@ import { DEFAULT_FACE_SERVICE_OPTIONS } from "./constants";
 import type { FaceServiceOptions } from "./interface";
 
 import merge from "lodash.merge";
+import { Detector } from "./detector.service";
 import { Utils } from "./utils.service";
+import { Verifier } from "./verifier.service";
 
 const GITHUB_BASE_URL =
   "https://raw.githubusercontent.com/PT-Perkasa-Pilar-Utama/ppu-face-recognition/main/models/";
@@ -59,7 +61,7 @@ export class FaceService {
         this.options.session!,
       );
       this.utils.log(
-        `Face Verifier ONNX model loaded successfully\n\tinput: ${this.embedderSession.inputNames}\n\toutput: ${this.embedderSession.outputNames}`,
+        `Face Embedder ONNX model loaded successfully\n\tinput: ${this.embedderSession.inputNames}\n\toutput: ${this.embedderSession.outputNames}`,
       );
     } catch (error) {
       console.error("Failed to initialize FaceService:", error);
@@ -74,14 +76,27 @@ export class FaceService {
     return this.detectorSession !== null && this.embedderSession !== null;
   }
 
-  async verify(img1: ArrayBuffer, img2: ArrayBuffer) {}
+  async verify(img1: ArrayBuffer, img2: ArrayBuffer) {
+    try {
+      const detector = new Detector(
+        this.detectorSession!,
+        this.embedderSession!,
+        this.options.detection,
+        this.options.debugging,
+      );
+      const embeddings = await detector.run(img1, img2);
 
-  private getEmbeddings() {}
+      const verifier = new Verifier(
+        this.options.verification,
+        this.options.debugging,
+      );
+      const distance = verifier.run(embeddings);
 
-  private getDistance() {}
-
-  private calculateResult() {
-    // np.round(distance, 6)
+      const result = {};
+      // np.round(distance, 6)
+    } catch (error) {
+      return {};
+    }
   }
 
   /**
