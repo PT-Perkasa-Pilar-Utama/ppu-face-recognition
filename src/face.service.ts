@@ -1,9 +1,10 @@
 import * as ort from "onnxruntime-node";
 
-import { DEFAULT_FACE_SERVICE_OPTIONS } from "./constants";
+import { DEFAULT_FACE_SERVICE_OPTIONS, DEFAULT_INFERENCE } from "./constants";
 import type { FaceServiceOptions } from "./interface";
 
 import merge from "lodash.merge";
+import { YoloDetectionInference } from "ppu-yolo-onnx-inference";
 import { Detector } from "./detector.service";
 import { Utils } from "./utils.service";
 import { Verifier } from "./verifier.service";
@@ -14,7 +15,7 @@ const GITHUB_BASE_URL =
 export class FaceService {
   private options: FaceServiceOptions = DEFAULT_FACE_SERVICE_OPTIONS;
 
-  private detectorSession: ort.InferenceSession | null = null;
+  private detectorSession: YoloDetectionInference | null = null;
   private embedderSession: ort.InferenceSession | null = null;
 
   private utils: Utils;
@@ -43,14 +44,15 @@ export class FaceService {
         undefined,
         `${GITHUB_BASE_URL}yolov11n-face.onnx`,
       );
-      this.detectorSession = await ort.InferenceSession.create(
-        new Uint8Array(detectorBuffer),
-        this.options.session!,
-      );
+      this.detectorSession = new YoloDetectionInference({
+        model: {
+          onnx: detectorBuffer,
+          classNames: DEFAULT_INFERENCE.YOLO_CLASSNAMES,
+        },
+      });
 
-      this.utils.log(
-        `Face Detector ONNX model loaded successfully\n\tinput: ${this.detectorSession.inputNames}\n\toutput: ${this.detectorSession.outputNames}`,
-      );
+      await this.detectorSession.init();
+      this.utils.log(`Face Detector Inference loaded successfully`);
 
       const verifierBuffer = await this.utils.loadResource(
         undefined,
@@ -84,7 +86,7 @@ export class FaceService {
         this.options.detection,
         this.options.debugging,
       );
-      const embeddings = await detector.run(img1, img2);
+      const embeddings = await detector.run(detector);
 
       const verifier = new Verifier(
         this.options.verification,
@@ -104,7 +106,7 @@ export class FaceService {
    * detection and embedding model.
    */
   public async destroy(): Promise<void> {
-    await this.detectorSession?.release();
+    await this.detectorSession?.destroy();
     await this.embedderSession?.release();
 
     this.detectorSession = null;

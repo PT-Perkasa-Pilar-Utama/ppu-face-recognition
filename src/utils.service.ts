@@ -125,25 +125,5 @@ export class Utils {
     return this.fetchAndCache(defaultUrl);
   }
 
-  canvasToTensor(canvas: Canvas, width: number, height: number): Float32Array {
-    const tensor = new Float32Array(
-      DEFAULT_INFERENCE.INPUT_SHAPE[3]! * height * width,
-    );
-    const ctx = canvas.getContext("2d");
-    const imageData = ctx.getImageData(0, 0, width, height).data;
 
-    for (let h = 0; h < height; h++) {
-      for (let w = 0; w < width; w++) {
-        const pixelIndex = h * width + w;
-        const rgbaIndex = pixelIndex * 4;
-
-        tensor[pixelIndex] = imageData[rgbaIndex]! / 255.0;
-        tensor[height * width + pixelIndex] = imageData[rgbaIndex + 1]! / 255.0;
-        tensor[2 * height * width + pixelIndex] =
-          imageData[rgbaIndex + 2]! / 255.0;
-      }
-    }
-
-    return tensor;
-  }
 }
