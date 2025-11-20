@@ -125,10 +125,21 @@ export class FaceService {
   }
 
   /**
+   * Update the service options on the fly.
+   * This allows changing detection, verification, or debugging parameters
+   * without re-initializing the heavy ONNX sessions.
+   */
+  public updateOptions(options: Partial<FaceServiceOptions>): void {
+    this.options = this.utils.mergeOptions(this.options, options);
+    this.utils.log("FaceService options updated");
+  }
+
+  /**
    * Releases the onnx runtime session for both
    * detection and embedding model.
    */
   public async destroy(): Promise<void> {
+    this.utils.log("Releasing ONNX sessions...");
     await this.detectorSession?.destroy();
     await this.embedderSession?.release();
 

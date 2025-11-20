@@ -1,11 +1,10 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 
-import { DEFAULT_DEBUGGING_OPTIONS, DEFAULT_INFERENCE } from "./constants";
+import { DEFAULT_DEBUGGING_OPTIONS } from "./constants";
 
 import merge from "lodash.merge";
 import * as os from "os";
 import * as path from "path";
-import type { Canvas } from "ppu-ocv";
 import type { DebuggingOptions } from "ppu-yolo-onnx-inference";
 
 const CACHE_DIR = path.join(os.homedir(), ".cache", "ppu-face-recognition");
@@ -126,4 +125,10 @@ export class Utils {
   }
 
 
+  /**
+   * Merge options with defaults.
+   */
+  public mergeOptions<T>(defaults: T, options: Partial<T>): T {
+    return merge({}, defaults, options);
+  }
 }

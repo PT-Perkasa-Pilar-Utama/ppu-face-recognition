@@ -114,38 +114,22 @@ export class Detector {
     return canvas;
   }
 
-  /**
-   * Align the detected face
-   */
-  private alignFace(image: any, box: Box): Canvas {
-    this.log(`Aligning face with box: x=${box.x}, y=${box.y}, w=${box.width}, h=${box.height}`);
-    if (!this.options.alignment) {
-      // If alignment is disabled, just return the cropped face resized to input shape
-      const canvas = createCanvas(
-        DEFAULT_INFERENCE.INPUT_SHAPE[1]!,
-        DEFAULT_INFERENCE.INPUT_SHAPE[2]!,
-      );
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(
-        image,
-        box.x,
-        box.y,
-        box.width,
-        box.height,
-        0,
-        0,
-        DEFAULT_INFERENCE.INPUT_SHAPE[1]!,
-        DEFAULT_INFERENCE.INPUT_SHAPE[2]!,
-      );
-      return canvas;
-    }
 
-    // For now, we'll implement a simple crop and resize as "alignment"
-    const canvas = createCanvas(
-      DEFAULT_INFERENCE.INPUT_SHAPE[1]!,
-      DEFAULT_INFERENCE.INPUT_SHAPE[2]!,
+  /**
+   * Crop the face from the image and resize to model input shape
+   */
+  private cropAndResize(image: Canvas | any, box: Box): Canvas {
+    this.log(
+      `Cropping and resizing face with box: x=${box.x}, y=${box.y}, w=${box.width}, h=${box.height}`,
     );
+
+    const targetWidth = DEFAULT_INFERENCE.INPUT_SHAPE[1]!;
+    const targetHeight = DEFAULT_INFERENCE.INPUT_SHAPE[2]!;
+
+    const canvas = createCanvas(targetWidth, targetHeight);
     const ctx = canvas.getContext("2d");
+
+    // Draw the cropped face onto the new canvas, resizing it
     ctx.drawImage(
       image,
       box.x,
@@ -154,33 +138,49 @@ export class Detector {
       box.height,
       0,
       0,
-      DEFAULT_INFERENCE.INPUT_SHAPE[1]!,
-      DEFAULT_INFERENCE.INPUT_SHAPE[2]!,
+      targetWidth,
+      targetHeight,
     );
+
     return canvas;
   }
 
   /**
-   * Extend the face bounding box by a percentage
+   * Extends the face bounding box by a percentage.
+   * Matches DeepFace's logic:
+   * expanded_w = w + int(w * expand_percentage / 100)
+   * expanded_h = h + int(h * expand_percentage / 100)
+   * x = max(0, x - int((expanded_w - w) / 2))
+   * y = max(0, y - int((expanded_h - h) / 2))
    */
   private extendFaceArea(box: Box, imageWidth: number, imageHeight: number): Box {
-    this.log(`Extending face area with padding: ${this.options.paddingPercentage}`);
-    const padding = this.options.paddingPercentage || 0;
-    if (padding === 0) return box;
+    const { paddingPercentage } = this.options;
+    if (!paddingPercentage || paddingPercentage <= 0) {
+      return box;
+    }
 
-    const offsetX = Math.round(box.width * padding);
-    const offsetY = Math.round(box.height * padding);
+    this.log(`Extending face area with padding percentage: ${paddingPercentage}`);
 
-    const newX = Math.max(0, box.x - offsetX);
-    const newY = Math.max(0, box.y - offsetY);
-    const newWidth = Math.min(imageWidth - newX, box.width + offsetX * 2);
-    const newHeight = Math.min(imageHeight - newY, box.height + offsetY * 2);
+    const w = box.width;
+    const h = box.height;
+    
+    // Calculate expanded dimensions
+    const expandedW = w + Math.floor((w * paddingPercentage) / 100);
+    const expandedH = h + Math.floor((h * paddingPercentage) / 100);
+
+    // Calculate new top-left coordinates to center the expansion
+    let x = Math.max(0, box.x - Math.floor((expandedW - w) / 2));
+    let y = Math.max(0, box.y - Math.floor((expandedH - h) / 2));
+
+    // Ensure we don't go out of bounds
+    const finalW = Math.min(imageWidth - x, expandedW);
+    const finalH = Math.min(imageHeight - y, expandedH);
 
     return {
-      x: newX,
-      y: newY,
-      width: newWidth,
-      height: newHeight,
+      x,
+      y,
+      width: finalW,
+      height: finalH,
     };
   }
 
@@ -294,16 +294,16 @@ export class Detector {
     };
 
     const extendedBox = this.extendFaceArea(box, image.width, image.height);
-    const faceCanvas = this.alignFace(image, extendedBox);
+    const faceCanvas = this.cropAndResize(image, extendedBox);
     
     // Save debug image if enabled
     if (this.debugging.debug) {
-      this.log(`Saving debug image of aligned face...`);
+      this.log(`Saving debug image of processed face...`);
       const toolkit = CanvasToolkit.getInstance();
       const timestamp = Date.now();
       toolkit.saveImage({
         canvas: faceCanvas,
-        filename: `aligned_face_${timestamp}`,
+        filename: `processed_face_${timestamp}`,
         path: this.debugging.debugFolder || "out",
       });
     }

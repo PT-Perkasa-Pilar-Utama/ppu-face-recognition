@@ -39,12 +39,6 @@ export interface DetectionOptions {
    * @default 0
    */
   paddingPercentage?: number;
-
-  /**
-   * Align the face detection result
-   * @default true
-   */
-  alignment?: boolean;
 }
 
 /**
