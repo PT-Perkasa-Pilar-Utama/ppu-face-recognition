@@ -1,21 +1,22 @@
 import { file } from "bun";
 import { FaceService } from "./src/face.service";
+import type { VerificationOptions } from "./src/interface";
 
 async function comprehensiveTest() {
   console.log("=".repeat(80));
   console.log("COMPREHENSIVE FACE VERIFICATION TEST");
   console.log("=".repeat(80));
 
-  const thresholds = [0.25, 0.3, 0.35, 0.4];
+const distanceMetrics: VerificationOptions["distanceMetric"][] = ["cosine", "euclidean", "euclideanL2", "angular"];
   
-  for (const threshold of thresholds) {
+  for (const metric of distanceMetrics) {
     console.log(`\n${"=".repeat(80)}`);
-    console.log(`TESTING WITH THRESHOLD: ${threshold}`);
+    console.log(`TESTING WITH METRIC: ${metric}`);
     console.log("=".repeat(80));
 
     const faceService = new FaceService({
       debugging: { verbose: false, debug: false },
-      verification: { distanceMetric: "cosine", cosine: threshold }
+      verification: { distanceMetric: metric }
     });
 
     await faceService.initialize();
