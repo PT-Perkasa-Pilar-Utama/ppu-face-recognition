@@ -40,6 +40,18 @@ export class Verifier {
   }
 
   /**
+   * Updates the verification options.
+   * @param options - New options to merge with existing ones.
+   */
+  public updateOptions(options: Partial<VerificationOptions>): void {
+    this.options = {
+      ...this.options,
+      ...options,
+    };
+    this.log(`Options updated: ${JSON.stringify(this.options)}`);
+  }
+
+  /**
    * Run verification between two embeddings
    */
   run(

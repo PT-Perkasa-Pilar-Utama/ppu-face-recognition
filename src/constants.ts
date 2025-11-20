@@ -10,7 +10,7 @@ export const DEFAULT_INFERENCE = {
   INPUT_SHAPE: [1, 160, 160, 3],
   OUTPUT_SHAPE: [1, 512],
   YOLO_CLASSNAMES: ["face"],
-};
+} as const;
 
 export const DEFAULT_DEBUGGING_OPTIONS: DebuggingOptions = {
   verbose: false,
