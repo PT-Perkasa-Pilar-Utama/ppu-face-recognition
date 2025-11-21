@@ -25,9 +25,9 @@ The following table compares the distance calculated by the TypeScript implement
 | **Euclidean L2** | Kevin1 - Kevin2 | 0.438668 | 0.656349 | 0.872046 | ✅ | ✅ | ✅ |
 | | Kevin1 - Haaland1 | 0.881058 | 1.235964 | 1.341394 | ❌ | ❌ | ❌ |
 | | Haaland1 - Haaland2 | 0.887054 | 0.371093 | 0.780862 | ❌ | ✅ | ✅ |
-| **Angular** | Kevin1 - Kevin2 | 0.140777 | N/A | N/A | ✅ | N/A | N/A |
-| | Kevin1 - Haaland1 | 0.290418 | N/A | N/A | ✅ | N/A | N/A |
-| | Haaland1 - Haaland2 | 0.292546 | N/A | N/A | ✅ | N/A | N/A |
+| **Angular** | Kevin1 - Kevin2 | 0.140777 | 0.212867 | 0.287227 | ✅ | ✅ | ✅ |
+| | Kevin1 - Haaland1 | 0.290418 | 0.424099 | 0.468010 | ✅ | ❌ | ❌ |
+| | Haaland1 - Haaland2 | 0.292546 | 0.118811 | 0.255348 | ✅ | ✅ | ✅ |
 
 ### Observations
 1.  **Speed**: TypeScript (CPU) is the fastest (~177ms), significantly outperforming Python DeepFace with the same model (~557ms) and even the lighter default model (~394ms).
