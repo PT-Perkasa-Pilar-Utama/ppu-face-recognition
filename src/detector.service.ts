@@ -233,20 +233,11 @@ export class Detector {
   }
 
   private postprocessImageEmbeddings(data: Float32Array): Float32Array {
-    // L2 Normalization
-    this.log(`Post-processing embeddings (L2 normalization)...`);
-    let sum = 0;
-    for (let i = 0; i < data.length; i++) {
-      sum += data[i]! * data[i]!;
-    }
-    const norm = Math.sqrt(sum);
-
-    const normalized = new Float32Array(data.length);
-    for (let i = 0; i < data.length; i++) {
-      normalized[i] = data[i]! / norm;
-    }
-    this.log(`Embedding normalized with L2 norm: ${norm.toFixed(6)}`);
-    return normalized;
+    // Return raw embeddings (no normalization)
+    // This allows "euclidean" to match Python DeepFace's raw euclidean distance.
+    // "euclideanL2", "cosine", and "angular" will handle normalization internally in Verifier.
+    this.log(`Post-processing embeddings (Raw)...`);
+    return data;
   }
 
   /**

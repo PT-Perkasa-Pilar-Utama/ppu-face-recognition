@@ -21,9 +21,9 @@ The following table compares the distance calculated by the TypeScript implement
 | **Cosine** | Kevin1 - Kevin2 | 0.096215 | 0.215397 | 0.380233 | ✅ | ✅ | ✅ |
 | | Kevin1 - Haaland1 | 0.388132 | 0.763804 | 0.899669 | ❌ | ❌ | ❌ |
 | | Haaland1 - Haaland2 | 0.393432 | 0.068855 | 0.304872 | ❌ | ✅ | ✅ |
-| **Euclidean** | Kevin1 - Kevin2 | 0.438668 | 15.28038 | 0.872046 | ✅ | ✅ | ✅ |
-| | Kevin1 - Haaland1 | 0.881058 | 28.47907 | 1.341394 | ❌ | ❌ | ❌ |
-| | Haaland1 - Haaland2 | 0.887054 | 8.651270 | 0.780862 | ❌ | ✅ | ✅ |
+| **Euclidean** | Kevin1 - Kevin2 | 6.783993 | 15.28038 | 0.872046 | ✅ | ✅ | ✅ |
+| | Kevin1 - Haaland1 | 18.651645 | 28.47907 | 1.341394 | ✅ | ❌ | ❌ |
+| | Haaland1 - Haaland2 | 19.054070 | 8.651270 | 0.780862 | ✅ | ✅ | ✅ |
 | **Euclidean L2** | Kevin1 - Kevin2 | 0.438668 | 0.656349 | 0.872046 | ✅ | ✅ | ✅ |
 | | Kevin1 - Haaland1 | 0.881058 | 1.235964 | 1.341394 | ❌ | ❌ | ❌ |
 | | Haaland1 - Haaland2 | 0.887054 | 0.371093 | 0.780862 | ❌ | ✅ | ✅ |
