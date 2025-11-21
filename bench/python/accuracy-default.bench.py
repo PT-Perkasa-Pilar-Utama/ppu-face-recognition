@@ -7,7 +7,6 @@ def main():
         "../../assets/image-kevin2.jpg",
         "../../assets/image-haaland1.jpeg",
         "../../assets/image-haaland2.png",
-        "../../assets/image-haaland3.png"
     ]
     
     metrics = ["cosine", "euclidean", "euclidean_l2", "angular"]
