@@ -137,10 +137,24 @@ export class Verifier {
     emb1: Float32Array,
     emb2: Float32Array,
   ): number {
-    // Assuming embeddings are already L2 normalized by the detector
-    // If so, Euclidean distance on normalized vectors is related to cosine distance.
-    // But let's implement it as standard Euclidean.
-    return this.getDistanceEuclidean(emb1, emb2);
+    const normEmb1 = this.l2Normalize(emb1);
+    const normEmb2 = this.l2Normalize(emb2);
+    return this.getDistanceEuclidean(normEmb1, normEmb2);
+  }
+
+  private l2Normalize(vector: Float32Array): Float32Array {
+    let norm = 0;
+    for (let i = 0; i < vector.length; i++) {
+      norm += vector[i]! * vector[i]!;
+    }
+    norm = Math.sqrt(norm);
+
+    const epsilon = 1e-10;
+    const normalized = new Float32Array(vector.length);
+    for (let i = 0; i < vector.length; i++) {
+      normalized[i] = vector[i]! / (norm + epsilon);
+    }
+    return normalized;
   }
 
   private getDistanceAngular(emb1: Float32Array, emb2: Float32Array): number {
