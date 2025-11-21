@@ -14,8 +14,6 @@
 
 The following table compares the distance calculated by the TypeScript implementation vs two Python DeepFace configurations.
 
-> **Note**: The TypeScript implementation uses L2-normalized embeddings by default, which explains why `Euclidean` and `Euclidean L2` produce identical results. Python DeepFace does not normalize embeddings for `Euclidean` by default.
-
 | Metric | Image Pair | TS Distance (Facenet512) | Py Custom (Facenet512) | Py Default (VGG-Face) | TS Match | Py Custom Match | Py Default Match |
 | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: |
 | **Cosine** | Kevin1 - Kevin2 | 0.096215 | 0.215397 | 0.380233 | ✅ | ✅ | ✅ |
