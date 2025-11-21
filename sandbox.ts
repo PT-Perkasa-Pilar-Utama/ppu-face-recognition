@@ -44,7 +44,7 @@ console.log(modelMetadata);
 function canvasToTensor(
   canvas: Canvas,
   width: number,
-  height: number
+  height: number,
 ): Float32Array {
   const tensor = new Float32Array(INPUT_SHAPE[3]! * height * width);
   const ctx = canvas.getContext("2d");
@@ -79,7 +79,7 @@ const yoloModelBuffer = await yoloModel.arrayBuffer();
 const faceModel = new YoloDetectionInference({
   model: {
     onnx: yoloModelBuffer,
-    classNames: DEFAULT_INFERENCE.YOLO_CLASSNAMES,
+    classNames: [...DEFAULT_INFERENCE.YOLO_CLASSNAMES],
   },
 });
 
