@@ -2,7 +2,6 @@ import type { DebuggingOptions } from "ppu-yolo-onnx-inference";
 import type {
   DetectionOptions,
   FaceServiceOptions,
-  SessionOptions,
   VerificationOptions,
 } from "./interface";
 
@@ -31,19 +30,8 @@ export const DEFAULT_VERIFICATION_OPTIONS: VerificationOptions = {
   angular: 0.35,
 };
 
-export const DEFAULT_SESSION_OPTIONS: SessionOptions = {
-  executionProviders: ["cpu"],
-  graphOptimizationLevel: "all",
-  enableCpuMemArena: true,
-  enableMemPattern: true,
-  executionMode: "sequential",
-  interOpNumThreads: 0,
-  intraOpNumThreads: 0,
-};
-
 export const DEFAULT_FACE_SERVICE_OPTIONS: FaceServiceOptions = {
   detection: DEFAULT_DETECTION_OPTIONS,
   verification: DEFAULT_VERIFICATION_OPTIONS,
   debugging: DEFAULT_DEBUGGING_OPTIONS,
-  session: DEFAULT_SESSION_OPTIONS,
 };

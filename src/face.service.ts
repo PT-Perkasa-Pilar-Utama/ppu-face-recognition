@@ -35,8 +35,6 @@ export class FaceService {
    */
   public constructor(options?: FaceServiceOptions) {
     this.options = merge({}, DEFAULT_FACE_SERVICE_OPTIONS, options);
-    this.options.session =
-      this.options.session || DEFAULT_FACE_SERVICE_OPTIONS.session;
 
     this.utils = new Utils(this.options.debugging);
   }
@@ -68,8 +66,7 @@ export class FaceService {
         `${GITHUB_BASE_URL}facenet512.onnx`,
       );
       this.embedderSession = await ort.InferenceSession.create(
-        new Uint8Array(verifierBuffer),
-        this.options.session!,
+        new Uint8Array(verifierBuffer)
       );
       this.utils.log(
         `Face Embedder ONNX model loaded successfully\n\tinput: ${this.embedderSession.inputNames}\n\toutput: ${this.embedderSession.outputNames}`,

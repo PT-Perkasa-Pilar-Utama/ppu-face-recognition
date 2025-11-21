@@ -76,52 +76,6 @@ export interface VerificationOptions {
   angular?: number;
 }
 
-/**
- * ONNX Runtime session configuration options.
- */
-export interface SessionOptions {
-  /**
-   * Execution providers to use for inference (e.g., 'cpu', 'cuda').
-   * @default ['cpu']
-   */
-  executionProviders?: string[];
-
-  /**
-   * Graph optimization level for ONNX Runtime.
-   * @default 'all'
-   */
-  graphOptimizationLevel?: "disabled" | "basic" | "extended" | "layout" | "all";
-
-  /**
-   * Enable CPU memory arena for better memory management.
-   * @default true
-   */
-  enableCpuMemArena?: boolean;
-
-  /**
-   * Enable memory pattern optimization.
-   * @default true
-   */
-  enableMemPattern?: boolean;
-
-  /**
-   * Execution mode for the session.
-   * @default 'sequential'
-   */
-  executionMode?: "sequential" | "parallel";
-
-  /**
-   * Number of inter-op threads. 0 lets ONNX decide.
-   * @default 0
-   */
-  interOpNumThreads?: number;
-
-  /**
-   * Number of intra-op threads. 0 lets ONNX decide.
-   * @default 0
-   */
-  intraOpNumThreads?: number;
-}
 
 /**
  * Full configuration for the Face service.
@@ -142,10 +96,6 @@ export interface FaceServiceOptions {
    */
   debugging?: DebuggingOptions;
 
-  /**
-   * ONNX Runtime session configuration options.
-   */
-  session?: SessionOptions;
 }
 
 /**
