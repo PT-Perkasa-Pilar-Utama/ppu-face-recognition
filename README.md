@@ -77,9 +77,13 @@ service.updateOptions({
 | ---------------- | -------------------------------- | ---------- | ------------------------------------------------ |
 | `distanceMetric` | `"cosine" \| "euclidean" \| ...` | `"cosine"` | Metric to compare embeddings.                    |
 | `cosine`         | `number`                         | `0.3`      | Threshold for Cosine distance (lower is better). |
+| `euclidean`      | `number`                         | `23.56`    | Threshold for Euclidean distance.                |
 | `euclideanL2`    | `number`                         | `1.04`     | Threshold for L2 Euclidean distance.             |
+| `angular`        | `number`                         | `0.35`     | Threshold for Angular distance.                  |
 
 ## Benchmark
+
+For detailed speed and accuracy benchmarks, including comparisons with Python DeepFace, please refer to [bench/README.md](bench/README.md).
 
 ```sh
 > bun task bench

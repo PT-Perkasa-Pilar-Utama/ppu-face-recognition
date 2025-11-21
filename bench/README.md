@@ -16,20 +16,20 @@ The following table compares the distance calculated by the TypeScript implement
 
 > **Note**: The TypeScript implementation uses L2-normalized embeddings by default, which explains why `Euclidean` and `Euclidean L2` produce identical results. Python DeepFace does not normalize embeddings for `Euclidean` by default.
 
-| Metric | Image Pair | TS Distance (Facenet512) | Py Custom (Facenet512) | Py Default (VGG-Face) | Match (TS/Cus/Def) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Cosine** | Kevin1 - Kevin2 | 0.096215 | 0.215397 | 0.380233 | True / True / True |
-| | Kevin1 - Haaland1 | 0.388132 | 0.763804 | 0.899669 | False / False / False |
-| | Haaland1 - Haaland2 | 0.393432 | 0.068855 | 0.304872 | False / True / True |
-| **Euclidean** | Kevin1 - Kevin2 | 0.438668 | 15.28038 | 0.872046 | True / True / True |
-| | Kevin1 - Haaland1 | 0.881058 | 28.47907 | 1.341394 | False / False / False |
-| | Haaland1 - Haaland2 | 0.887054 | 8.651270 | 0.780862 | False / True / True |
-| **Euclidean L2** | Kevin1 - Kevin2 | 0.438668 | 0.656349 | 0.872046 | True / True / True |
-| | Kevin1 - Haaland1 | 0.881058 | 1.235964 | 1.341394 | False / False / False |
-| | Haaland1 - Haaland2 | 0.887054 | 0.371093 | 0.780862 | False / True / True |
-| **Angular** | Kevin1 - Kevin2 | 0.140777 | N/A | N/A | True / N/A / N/A |
-| | Kevin1 - Haaland1 | 0.290418 | N/A | N/A | True / N/A / N/A |
-| | Haaland1 - Haaland2 | 0.292546 | N/A | N/A | True / N/A / N/A |
+| Metric | Image Pair | TS Distance (Facenet512) | Py Custom (Facenet512) | Py Default (VGG-Face) | TS Match | Py Custom Match | Py Default Match |
+| :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: |
+| **Cosine** | Kevin1 - Kevin2 | 0.096215 | 0.215397 | 0.380233 | ✅ | ✅ | ✅ |
+| | Kevin1 - Haaland1 | 0.388132 | 0.763804 | 0.899669 | ❌ | ❌ | ❌ |
+| | Haaland1 - Haaland2 | 0.393432 | 0.068855 | 0.304872 | ❌ | ✅ | ✅ |
+| **Euclidean** | Kevin1 - Kevin2 | 0.438668 | 15.28038 | 0.872046 | ✅ | ✅ | ✅ |
+| | Kevin1 - Haaland1 | 0.881058 | 28.47907 | 1.341394 | ❌ | ❌ | ❌ |
+| | Haaland1 - Haaland2 | 0.887054 | 8.651270 | 0.780862 | ❌ | ✅ | ✅ |
+| **Euclidean L2** | Kevin1 - Kevin2 | 0.438668 | 0.656349 | 0.872046 | ✅ | ✅ | ✅ |
+| | Kevin1 - Haaland1 | 0.881058 | 1.235964 | 1.341394 | ❌ | ❌ | ❌ |
+| | Haaland1 - Haaland2 | 0.887054 | 0.371093 | 0.780862 | ❌ | ✅ | ✅ |
+| **Angular** | Kevin1 - Kevin2 | 0.140777 | N/A | N/A | ✅ | N/A | N/A |
+| | Kevin1 - Haaland1 | 0.290418 | N/A | N/A | ✅ | N/A | N/A |
+| | Haaland1 - Haaland2 | 0.292546 | N/A | N/A | ✅ | N/A | N/A |
 
 ### Observations
 1.  **Speed**: TypeScript (CPU) is the fastest (~177ms), significantly outperforming Python DeepFace with the same model (~557ms) and even the lighter default model (~394ms).
