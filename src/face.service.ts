@@ -1,7 +1,7 @@
 import * as ort from "onnxruntime-node";
 
 import { DEFAULT_FACE_SERVICE_OPTIONS, DEFAULT_INFERENCE } from "./constants";
-import type { FaceServiceOptions } from "./interface";
+import type { Box, FaceServiceOptions } from "./interface";
 
 import merge from "lodash.merge";
 import { YoloDetectionInference } from "ppu-yolo-onnx-inference";
@@ -11,6 +11,15 @@ import { Verifier } from "./verifier.service";
 
 const GITHUB_BASE_URL =
   "https://raw.githubusercontent.com/PT-Perkasa-Pilar-Utama/ppu-face-recognition/main/models/";
+
+export interface FaceServiceResult {
+  match: boolean;
+  distance: number;
+  threshold: number;
+  face1: Box | undefined;
+  face2: Box | undefined;
+  error?: string | undefined;
+}
 
 export class FaceService {
   private options: FaceServiceOptions = DEFAULT_FACE_SERVICE_OPTIONS;
@@ -78,9 +87,14 @@ export class FaceService {
     return this.detectorSession !== null && this.embedderSession !== null;
   }
 
-  async verify(img1: ArrayBuffer, img2: ArrayBuffer) {
+  async verify(
+    img1: ArrayBuffer,
+    img2: ArrayBuffer,
+  ): Promise<FaceServiceResult> {
     if (!this.isInitialized()) {
-      throw new Error("FaceService is not initialized. Call initialize() first.");
+      throw new Error(
+        "FaceService is not initialized. Call initialize() first.",
+      );
     }
 
     try {
@@ -90,8 +104,11 @@ export class FaceService {
         this.options.detection,
         this.options.debugging,
       );
-      
-      const { embedding1, embedding2, face1, face2 } = await detector.run(img1, img2);
+
+      const { embedding1, embedding2, face1, face2 } = await detector.run(
+        img1,
+        img2,
+      );
 
       if (!embedding1 || !embedding2) {
         return {
@@ -108,7 +125,7 @@ export class FaceService {
         this.options.verification,
         this.options.debugging,
       );
-      
+
       const result = verifier.run(embedding1, embedding2);
 
       return {

@@ -7,10 +7,10 @@ import type {
 } from "./interface";
 
 export const DEFAULT_INFERENCE = {
-  INPUT_SHAPE: [1, 160, 160, 3],
-  OUTPUT_SHAPE: [1, 512],
-  YOLO_CLASSNAMES: ["face"],
-} as const;
+  INPUT_SHAPE: [1, 160, 160, 3] as [number, number, number, number],
+  OUTPUT_SHAPE: [1, 512] as [number, number],
+  YOLO_CLASSNAMES: ["face"] as string[],
+};
 
 export const DEFAULT_DEBUGGING_OPTIONS: DebuggingOptions = {
   verbose: false,

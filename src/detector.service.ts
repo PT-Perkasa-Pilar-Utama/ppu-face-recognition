@@ -74,7 +74,8 @@ export class Detector {
         // FaceNet normalization: (pixel - mean) / std
         // mean = 127.5, std = 128.0
         tensor[pixelIndex] = (imageData[rgbaIndex]! - 127.5) / 128.0;
-        tensor[height * width + pixelIndex] = (imageData[rgbaIndex + 1]! - 127.5) / 128.0;
+        tensor[height * width + pixelIndex] =
+          (imageData[rgbaIndex + 1]! - 127.5) / 128.0;
         tensor[2 * height * width + pixelIndex] =
           (imageData[rgbaIndex + 2]! - 127.5) / 128.0;
       }
@@ -114,7 +115,6 @@ export class Detector {
     return canvas;
   }
 
-
   /**
    * Crop the face from the image and resize to model input shape
    */
@@ -153,17 +153,23 @@ export class Detector {
    * x = max(0, x - int((expanded_w - w) / 2))
    * y = max(0, y - int((expanded_h - h) / 2))
    */
-  private extendFaceArea(box: Box, imageWidth: number, imageHeight: number): Box {
+  private extendFaceArea(
+    box: Box,
+    imageWidth: number,
+    imageHeight: number,
+  ): Box {
     const { paddingPercentage } = this.options;
     if (!paddingPercentage || paddingPercentage <= 0) {
       return box;
     }
 
-    this.log(`Extending face area with padding percentage: ${paddingPercentage}`);
+    this.log(
+      `Extending face area with padding percentage: ${paddingPercentage}`,
+    );
 
     const w = box.width;
     const h = box.height;
-    
+
     // Calculate expanded dimensions
     const expandedW = w + Math.floor((w * paddingPercentage) / 100);
     const expandedH = h + Math.floor((h * paddingPercentage) / 100);
@@ -190,9 +196,10 @@ export class Detector {
   private async extractEmbeddings(faceCanvas: Canvas): Promise<Float32Array> {
     this.log(`Extracting embeddings from face canvas...`);
     const tensor = this.preprocessImageEmbeddings(faceCanvas);
-    
+
     const feeds: Record<string, ort.Tensor> = {};
     const inputName = this.embedder.inputNames[0]!;
+
     feeds[inputName] = new ort.Tensor(
       "float32",
       tensor,
@@ -212,8 +219,16 @@ export class Detector {
       DEFAULT_INFERENCE.INPUT_SHAPE[1]!,
       DEFAULT_INFERENCE.INPUT_SHAPE[2]!,
     );
-    this.log(`Tensor shape: [${DEFAULT_INFERENCE.INPUT_SHAPE.join(', ')}], length: ${tensor.length}`);
-    this.log(`Tensor sample values (first 5): [${Array.from(tensor.slice(0, 5)).map(v => v.toFixed(4)).join(', ')}]`);
+
+    this.log(
+      `Tensor shape: [${DEFAULT_INFERENCE.INPUT_SHAPE.join(", ")}], length: ${tensor.length}`,
+    );
+
+    this.log(
+      `Tensor sample values (first 5): [${Array.from(tensor.slice(0, 5))
+        .map((v) => v.toFixed(4))
+        .join(", ")}]`,
+    );
     return tensor;
   }
 
@@ -225,7 +240,7 @@ export class Detector {
       sum += data[i]! * data[i]!;
     }
     const norm = Math.sqrt(sum);
-    
+
     const normalized = new Float32Array(data.length);
     for (let i = 0; i < data.length; i++) {
       normalized[i] = data[i]! / norm;
@@ -237,17 +252,23 @@ export class Detector {
   /**
    * Run the detection and embedding extraction pipeline
    */
-  async run(img1: ArrayBuffer, img2: ArrayBuffer): Promise<{
+  async run(
+    img1: ArrayBuffer,
+    img2: ArrayBuffer,
+  ): Promise<{
     embedding1?: Float32Array;
     embedding2?: Float32Array;
     face1?: Box;
     face2?: Box;
   }> {
-    this.log(`Starting face detection and embedding extraction for two images...`);
-    this.log(`Processing image 1...`);
-    const result1 = await this.processImage(img1);
-    this.log(`Processing image 2...`);
-    const result2 = await this.processImage(img2);
+    this.log(
+      `Starting face detection and embedding extraction for two images...`,
+    );
+
+    const [result1, result2] = await Promise.all([
+      this.processImage(img1),
+      this.processImage(img2),
+    ]);
 
     return {
       embedding1: result1?.embedding,
@@ -257,7 +278,9 @@ export class Detector {
     };
   }
 
-  private async processImage(imgBuffer: ArrayBuffer): Promise<{ embedding: Float32Array, box: Box } | undefined> {
+  private async processImage(
+    imgBuffer: ArrayBuffer,
+  ): Promise<{ embedding: Float32Array; box: Box } | undefined> {
     const detections = await this.detector.detect(imgBuffer);
     this.log(`Detected ${detections.length} face(s)`);
     if (!detections.length) {
@@ -277,15 +300,17 @@ export class Detector {
     let bestFace = filteredDetections[0]!;
     this.log(`Found ${filteredDetections.length} face(s) above threshold`);
     if (filteredDetections.length > 1) {
-      this.log("[WARN] More than one face detected, picking highest confidence.");
+      this.log(
+        "[WARN] More than one face detected, picking highest confidence.",
+      );
       bestFace = this.getMostConfident(filteredDetections);
     }
 
     this.log(`Best face confidence: ${bestFace.confidence.toFixed(4)}`);
-    
+
     const image = await loadImage(imgBuffer);
     this.log(`Image loaded: ${image.width}x${image.height}`);
-    // Assuming DetectedObject has box: { x, y, width, height }
+
     const box: Box = {
       x: bestFace.box.x,
       y: bestFace.box.y,
@@ -295,19 +320,19 @@ export class Detector {
 
     const extendedBox = this.extendFaceArea(box, image.width, image.height);
     const faceCanvas = this.cropAndResize(image, extendedBox);
-    
-    // Save debug image if enabled
+
     if (this.debugging.debug) {
       this.log(`Saving debug image of processed face...`);
       const toolkit = CanvasToolkit.getInstance();
       const timestamp = Date.now();
+
       toolkit.saveImage({
         canvas: faceCanvas,
         filename: `processed_face_${timestamp}`,
         path: this.debugging.debugFolder || "out",
       });
     }
-    
+
     const embedding = await this.extractEmbeddings(faceCanvas);
 
     return { embedding, box: extendedBox };
